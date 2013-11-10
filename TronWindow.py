@@ -58,7 +58,8 @@ class TronWindow(QtGui.QWidget):
                 if collidingCycle != None:
                     numKilled = numKilled + 1
                     self.deadLightCycles.append(lightCycle)
-                    if lightCycle.getHeadPosition() == collidingCycle.getHeadPosition():
+                    if lightCycle != collidingCycle and \
+                       lightCycle.getHeadPosition() == collidingCycle.getHeadPosition():
                         numKilled = numKilled + 1
                         self.deadLightCycles.append(collidingCycle)
                 else:
