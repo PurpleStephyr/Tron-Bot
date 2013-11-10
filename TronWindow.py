@@ -40,6 +40,9 @@ class TronWindow(QtGui.QWidget):
         self.humanPlayer = LightCycle('Red', self, QtCore.Qt.red, (0,0), Direction.Down)
         self.lightCycles = [self.humanPlayer] + self.bots
         self.deadLightCycles = []
+        for lightCycle in self.bots:
+            lightCycle.computeNextDirection()
+
         self.timer = QtCore.QTimer(self)
         self.timer.timeout.connect(self.onTimer)
         self.timer.start(200)
