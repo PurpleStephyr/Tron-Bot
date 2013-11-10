@@ -72,4 +72,4 @@ def getBounds(corners):
     return (minX, maxX, minY, maxY)
 
 def getArea(bounds):
-    return (bounds[1]-bounds[0]+1)*(bounds[3]-bounds[2]+1)
+    return max(1,(bounds[1]-bounds[0]+1))*max(1,(bounds[3]-bounds[2]+1))
