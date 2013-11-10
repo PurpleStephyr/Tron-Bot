@@ -55,8 +55,16 @@ class LightCycle(QtCore.QObject):
 
     def computeNextDirection(self):
         validDirections = []
+        otherPossiblePositions = []
+        for lightCycle in self.tronWindow.lightCycles:
+            if lightCycle != self:
+                for direction in Direction.All:
+                    otherPossiblePositions.append(Direction.add(lightCycle.getHeadPosition(),
+                                                                direction))
         for direction in Direction.All:
-            if self.isValidPosition(Direction.add(self.getHeadPosition(), direction)):
+            attemptedPosition = Direction.add(self.getHeadPosition(), direction)
+            if self.isValidPosition(attemptedPosition) and \
+               not attemptedPosition in otherPossiblePositions:
                 validDirections.append(direction)
 
         if len(validDirections) > 0 and not self.direction in validDirections:
