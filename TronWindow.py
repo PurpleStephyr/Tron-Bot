@@ -34,13 +34,32 @@ class TronWindow(QtGui.QWidget):
 
     def startGame(self):
         self.startButton.hide()
-        self.lightCycles = [LightCycle(self, QtCore.Qt.red, (0,0), Direction.Down),
-                            LightCycle(self, QtCore.Qt.blue, Direction.add(self.size, (-1, -1)),
-                                       Direction.Up)]
+        self.lightCycles = [LightCycle('Red', self, QtCore.Qt.red, (0,0), Direction.Down),
+                            LightCycle('Blue', self, QtCore.Qt.blue,
+                                       Direction.add(self.size, (-1, -1)), Direction.Up)]
+        self.deadLightCycles = []
         self.timer = QtCore.QTimer(self)
         self.timer.timeout.connect(self.onTimer)
         self.timer.start(200)
 
     def onTimer(self):
+        numKilled = 0
         for lightCycle in self.lightCycles:
             lightCycle.move()
+            position = lightCycle.getHeadPosition()
+            if position[0] < 0 or position[1] < 0 or position[0] >= self.size[0] or \
+               position[1] >= self.size[1]:
+                numKilled = numKilled + 1
+                self.deadLightCycles.append(lightCycle)
+
+        for i in xrange(numKilled):
+            self.lightCycles.remove(self.deadLightCycles[-i-1])
+
+        if len(self.lightCycles) == 1:
+            self.timer.stop()
+            print 'Game over. Winner is ' + self.lightCycles[0].name
+        elif len(self.lightCycles) == 0:
+            self.timer.stop()
+            print 'Tie game: winners are:'
+            for i in xrange(numKilled):
+                print self.deadLightCycles[-i-1].name

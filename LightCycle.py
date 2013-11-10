@@ -21,8 +21,9 @@ import Direction
 from Dot import *
 
 class LightCycle(QtCore.QObject):
-    def __init__(self, tronWindow, colour, position, initialDirection):
+    def __init__(self, name, tronWindow, colour, position, initialDirection):
         QtCore.QObject.__init__(self, tronWindow)
+        self.name = name
         self.tronWindow = tronWindow
         self.colour = colour
         self.direction = initialDirection
@@ -42,5 +43,8 @@ class LightCycle(QtCore.QObject):
 
     def move(self):
         self.nodes.append(Dot(self.tronWindow,
-                              Direction.add(self.nodes[-1].position, self.direction),
+                              Direction.add(self.getHeadPosition(), self.direction),
                               self.colour))
+
+    def getHeadPosition(self):
+        return self.nodes[-1].position
