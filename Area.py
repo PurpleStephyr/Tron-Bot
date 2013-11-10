@@ -39,10 +39,35 @@ class Area:
                     currentDirection = wallDirection
                     wallDirection = (temp[0]*-1, temp[1]*-1)
                 else:
-                    temp = wallDirection
-                    wallDirection = currentDirection
-                    currentDirection = (temp[0]*-1, temp[1]*-1)
+                    oppositeWallDirection = (wallDirection[0]*-1, wallDirection[1]*-1)
+                    if not self.window.checkPosition(Direction.add(currentPosition,
+                                                                   oppositeWallDirection)):
+                        self.corners.append(currentPosition)
+                        wallDirection = oppositeWallDirection
+                        currentDirection = (currentDirection[0]*-1, currentDirection[1]*-1)
+                    else:
+                        wallDirection = currentDirection
+                        currentDirection = oppositeWallDirection
 
             currentPosition = Direction.add(currentPosition, currentDirection)
             if currentPosition == position:
                 break
+
+def calculateArea(corners):
+    minX = corners[0][0]
+    maxX = corners[0][0]
+    minY = corners[0][1]
+    maxY = corners[0][1]
+    for corner in corners:
+        if corner[0] < minX:
+            minX = corner[0]
+        elif corner[0] > maxX:
+            maxX = corner[0]
+
+        if corner[1] < minY:
+            minY = corner[1]
+        elif corner[1] > maxY:
+            maxY = corner[1]
+
+    # Really bad estimation, but whatever.
+    return (maxX-minX+1)*(maxY-minY+1)

@@ -34,7 +34,6 @@ class LightCycle(QtCore.QObject):
 
         self.nodes = [Dot(self.tronWindow, position, self.colour)]
         self.occupiedSpaces[position[0]][position[1]] = True
-        self.corners = []
 
     def __del__(self):
         for node in self.nodes:
@@ -56,25 +55,28 @@ class LightCycle(QtCore.QObject):
         return self.nodes[-1].position
 
     def computeNextDirection(self):
-        validDirections = []
         otherPossiblePositions = []
         for lightCycle in self.tronWindow.lightCycles:
             if lightCycle != self:
                 for direction in Direction.All:
                     otherPossiblePositions.append(Direction.add(lightCycle.getHeadPosition(),
                                                                 direction))
+        maxArea = 0
+        desiredDirection = None
+        desiredDirectionCollides = False
         for direction in Direction.All:
             attemptedPosition = Direction.add(self.getHeadPosition(), direction)
-            if self.tronWindow.checkPosition(attemptedPosition) and \
-               not attemptedPosition in otherPossiblePositions:
-                validDirections.append(direction)
+            if self.tronWindow.checkPosition(attemptedPosition):
+                currentArea = Area(self.tronWindow, attemptedPosition)
+                estimatedArea = calculateArea(currentArea.corners)
+                if estimatedArea > maxArea:
+                    maxArea = estimatedArea
+                    desiredDirectionCollides = attemptedPosition in otherPossiblePositions
+                    desiredDirection = direction
+                elif estimatedArea == maxArea and (desiredDirectionCollides or
+                                                   direction == self.direction):
+                    desiredDirectionCollides = attemptedPosition in otherPossiblePositions
+                    desiredDirection = direction
 
-        if len(validDirections) > 0 and not self.direction in validDirections:
-            self.direction = validDirections[0]
-
-        currentArea = Area(self.tronWindow, Direction.add(self.getHeadPosition(), self.direction))
-        for corner in self.corners:
-            corner.deleteLater()
-        self.corners = []
-        for corner in currentArea.corners:
-            self.corners.append(Dot(self.tronWindow, corner, QtCore.Qt.green))
+        if desiredDirection != None:
+            self.direction = desiredDirection
