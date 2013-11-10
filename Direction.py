@@ -19,5 +19,7 @@ Down = (0,1)
 Left = (-1,0)
 Right = (1,0)
 
+All = [Up, Down, Left, Right]
+
 def add(d1, d2):
     return (d1[0] + d2[0], d1[1] + d2[1])

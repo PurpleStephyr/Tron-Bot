@@ -54,4 +54,18 @@ class LightCycle(QtCore.QObject):
         return self.nodes[-1].position
 
     def computeNextDirection(self):
-        pass
+        validDirections = []
+        for direction in Direction.All:
+            if self.isValidPosition(Direction.add(self.getHeadPosition(), direction)):
+                validDirections.append(direction)
+
+        if len(validDirections) > 0 and not self.direction in validDirections:
+            self.direction = validDirections[0]
+
+    def isValidPosition(self, position):
+        if position[0] >= 0 and position[1] >= 0 and \
+           position[0] < self.tronWindow.size[0] and position[1] < self.tronWindow.size[1] and \
+           self.tronWindow.checkCollision(position) == None:
+            return True
+        else:
+            return False
