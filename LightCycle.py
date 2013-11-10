@@ -48,3 +48,6 @@ class LightCycle(QtCore.QObject):
 
     def getHeadPosition(self):
         return self.nodes[-1].position
+
+    def computeNextDirection(self):
+        pass

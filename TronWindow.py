@@ -65,6 +65,9 @@ class TronWindow(QtGui.QWidget):
             print 'Tie game: winners are:'
             for i in xrange(numKilled):
                 print self.deadLightCycles[-i-1].name
+        else:
+            for lightCycle in self.lightCycles:
+                lightCycle.computeNextDirection()
 
     def keyPressEvent(self, keyEvent):
         if self.humanPlayer != None and keyEvent.type() == QtCore.QEvent.KeyPress:
