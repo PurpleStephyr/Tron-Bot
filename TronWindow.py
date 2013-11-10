@@ -34,9 +34,11 @@ class TronWindow(QtGui.QWidget):
 
     def startGame(self):
         self.startButton.hide()
+        self.grabKeyboard()
         self.lightCycles = [LightCycle('Red', self, QtCore.Qt.red, (0,0), Direction.Down),
                             LightCycle('Blue', self, QtCore.Qt.blue,
                                        Direction.add(self.size, (-1, -1)), Direction.Up)]
+        self.humanPlayer = self.lightCycles[0]
         self.deadLightCycles = []
         self.timer = QtCore.QTimer(self)
         self.timer.timeout.connect(self.onTimer)
@@ -63,3 +65,11 @@ class TronWindow(QtGui.QWidget):
             print 'Tie game: winners are:'
             for i in xrange(numKilled):
                 print self.deadLightCycles[-i-1].name
+
+    def keyPressEvent(self, keyEvent):
+        if self.humanPlayer != None and keyEvent.type() == QtCore.QEvent.KeyPress:
+            self.humanPlayer.setDirection( {
+                        QtCore.Qt.Key_Up : Direction.Up,
+                        QtCore.Qt.Key_Down : Direction.Down,
+                        QtCore.Qt.Key_Left : Direction.Left,
+                        QtCore.Qt.Key_Right : Direction.Right }.get(keyEvent.key(), None) )
