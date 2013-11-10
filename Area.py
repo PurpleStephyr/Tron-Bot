@@ -40,11 +40,17 @@ class Area:
                     wallDirection = (temp[0]*-1, temp[1]*-1)
                 else:
                     oppositeWallDirection = (wallDirection[0]*-1, wallDirection[1]*-1)
+                    oppositeCurrentDirection = (currentDirection[0]*-1, currentDirection[1]*-1)
                     if not self.window.checkPosition(Direction.add(currentPosition,
                                                                    oppositeWallDirection)):
                         self.corners.append(currentPosition)
                         wallDirection = oppositeWallDirection
                         currentDirection = (currentDirection[0]*-1, currentDirection[1]*-1)
+                    elif not self.window.checkPosition(Direction.add(currentPosition,
+                                                                     oppositeCurrentDirection)):
+                        self.corners.append(currentPosition)
+                        wallDirection = oppositeCurrentDirection
+                        currentDirection = oppositeWallDirection
                     else:
                         wallDirection = currentDirection
                         currentDirection = oppositeWallDirection
