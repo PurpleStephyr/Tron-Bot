@@ -18,7 +18,16 @@ import random
 
 from PyQt4 import QtGui
 
+PIXELS_PER_SQUARE = 12
+
 class TronWindow(QtGui.QWidget):
     def __init__(self):
         QtGui.QWidget.__init__(self)
+        self.startButton = QtGui.QPushButton('Start', self)
+        self.startButton.clicked.connect(self.startGame)
+        self.startButton.move(self.width()/2 - self.startButton.width()/2,
+                              self.height()/2 - self.startButton.height()/2)
         self.show()
+
+    def startGame(self):
+        self.startButton.hide()
