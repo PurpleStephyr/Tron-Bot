@@ -62,21 +62,52 @@ class LightCycle(QtCore.QObject):
                     otherPossiblePositions.append(Direction.add(lightCycle.getHeadPosition(),
                                                                 direction))
         maxArea = 0
-        desiredDirection = None
+        desirableDirections = []
         desiredDirectionCollides = False
         for direction in Direction.All:
             attemptedPosition = Direction.add(self.getHeadPosition(), direction)
             if self.tronWindow.checkPosition(attemptedPosition):
                 currentArea = Area(self.tronWindow, attemptedPosition)
-                estimatedArea = calculateArea(currentArea.corners)
+                bounds = getBounds(currentArea.corners)
+                estimatedArea = getArea(bounds)
                 if estimatedArea > maxArea:
+                    desirableDirections = [(direction, bounds)]
                     maxArea = estimatedArea
                     desiredDirectionCollides = attemptedPosition in otherPossiblePositions
-                    desiredDirection = direction
-                elif estimatedArea == maxArea and (desiredDirectionCollides or
-                                                   direction == self.direction):
-                    desiredDirectionCollides = attemptedPosition in otherPossiblePositions
-                    desiredDirection = direction
+                elif estimatedArea == maxArea and (desiredDirectionCollides):
+                    if attemptedPosition in otherPossiblePositions:
+                        desirableDirections.append((direction, bounds))
+                    else:
+                        desirableDirections = [(direction, bounds)]
+                        desiredDirectionCollides = False
+                elif estimatedArea == maxArea and not attemptedPosition in otherPossiblePositions:
+                    desirableDirections.append((direction, bounds))
 
-        if desiredDirection != None:
-            self.direction = desiredDirection
+        bestDirectionRanking = 0
+        bestDirection = None
+        for directionAndBounds in desirableDirections:
+            direction = directionAndBounds[0]
+            bounds = directionAndBounds[1]
+            if direction == Direction.Up:
+                bounds = (bounds[0], bounds[1], bounds[2],
+                          min(bounds[3], self.tronWindow.humanPlayer.getHeadPosition()[1]))
+            elif direction == Direction.Down:
+                bounds = (bounds[0], bounds[1],
+                          max(bounds[2], self.tronWindow.humanPlayer.getHeadPosition()[1]),
+                          bounds[3])
+            elif direction == Direction.Left:
+                bounds = (bounds[0],
+                             min(bounds[1], self.tronWindow.humanPlayer.getHeadPosition()[0]),
+                             bounds[2], bounds[3])
+            else:
+                bounds = (max(bounds[0], self.tronWindow.humanPlayer.getHeadPosition()[0]),
+                          bounds[1], bounds[2], bounds[3])
+            directionRanking = getArea(bounds)
+            if directionRanking > bestDirectionRanking:
+                bestDirection = direction
+                bestDirectionRanking = directionRanking
+            elif directionRanking == bestDirectionRanking and direction == self.direction:
+                bestDirection = direction
+
+        if bestDirection != None:
+            self.direction = bestDirection

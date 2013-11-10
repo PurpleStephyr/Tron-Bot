@@ -53,7 +53,7 @@ class Area:
             if currentPosition == position:
                 break
 
-def calculateArea(corners):
+def getBounds(corners):
     minX = corners[0][0]
     maxX = corners[0][0]
     minY = corners[0][1]
@@ -69,5 +69,7 @@ def calculateArea(corners):
         elif corner[1] > maxY:
             maxY = corner[1]
 
-    # Really bad estimation, but whatever.
-    return (maxX-minX+1)*(maxY-minY+1)
+    return (minX, maxX, minY, maxY)
+
+def getArea(bounds):
+    return (bounds[1]-bounds[0]+1)*(bounds[3]-bounds[2]+1)

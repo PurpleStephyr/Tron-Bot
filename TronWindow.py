@@ -36,7 +36,7 @@ class TronWindow(QtGui.QWidget):
         self.startButton.hide()
         self.grabKeyboard()
         self.bots = [LightCycle('Blue', self, QtCore.Qt.blue,
-                                       Direction.add(self.size, (-1, -1)), Direction.Up)]
+                                Direction.add(self.size, (-1, -1)), Direction.Up)]
         self.humanPlayer = LightCycle('Red', self, QtCore.Qt.red, (0,0), Direction.Down)
         self.lightCycles = [self.humanPlayer] + self.bots
         self.deadLightCycles = []
