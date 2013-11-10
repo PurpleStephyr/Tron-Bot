@@ -77,7 +77,7 @@ class TronWindow(QtGui.QWidget):
             for i in xrange(numKilled):
                 print self.deadLightCycles[-i-1].name
         else:
-            for lightCycle in self.lightCycles:
+            for lightCycle in self.bots:
                 lightCycle.computeNextDirection()
 
     def keyPressEvent(self, keyEvent):
