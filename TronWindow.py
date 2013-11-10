@@ -14,15 +14,18 @@
 # You should have received a copy of the GNU General Public License
 # along with TronBot.  If not, see <http://www.gnu.org/licenses/>.
 
-import random
-
 from PyQt4 import QtGui
+from PyQt4 import QtCore
 
-PIXELS_PER_SQUARE = 12
+from LightCycle import *
+import Dot
+import Direction
 
 class TronWindow(QtGui.QWidget):
     def __init__(self):
         QtGui.QWidget.__init__(self)
+        self.size = (25,25)
+        self.resize(self.size[0]*Dot.PIXELS_PER_SQUARE,self.size[1]*Dot.PIXELS_PER_SQUARE)
         self.startButton = QtGui.QPushButton('Start', self)
         self.startButton.clicked.connect(self.startGame)
         self.startButton.move(self.width()/2 - self.startButton.width()/2,
@@ -31,3 +34,13 @@ class TronWindow(QtGui.QWidget):
 
     def startGame(self):
         self.startButton.hide()
+        self.lightCycles = [LightCycle(self, QtCore.Qt.red, (0,0), Direction.Down),
+                            LightCycle(self, QtCore.Qt.blue, Direction.add(self.size, (-1, -1)),
+                                       Direction.Up)]
+        self.timer = QtCore.QTimer(self)
+        self.timer.timeout.connect(self.onTimer)
+        self.timer.start(200)
+
+    def onTimer(self):
+        for lightCycle in self.lightCycles:
+            lightCycle.move()
