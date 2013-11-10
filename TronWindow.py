@@ -35,10 +35,10 @@ class TronWindow(QtGui.QWidget):
     def startGame(self):
         self.startButton.hide()
         self.grabKeyboard()
-        self.lightCycles = [LightCycle('Red', self, QtCore.Qt.red, (0,0), Direction.Down),
-                            LightCycle('Blue', self, QtCore.Qt.blue,
+        self.bots = [LightCycle('Blue', self, QtCore.Qt.blue,
                                        Direction.add(self.size, (-1, -1)), Direction.Up)]
-        self.humanPlayer = self.lightCycles[0]
+        self.humanPlayer = LightCycle('Red', self, QtCore.Qt.red, (0,0), Direction.Down)
+        self.lightCycles = [self.humanPlayer] + self.bots
         self.deadLightCycles = []
         self.timer = QtCore.QTimer(self)
         self.timer.timeout.connect(self.onTimer)
