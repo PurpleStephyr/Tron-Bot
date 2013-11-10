@@ -28,7 +28,11 @@ class LightCycle(QtCore.QObject):
         self.colour = colour
         self.direction = initialDirection
 
+        self.occupiedSpaces = [[False for j in xrange(0, self.tronWindow.size[1])]
+                               for i in xrange(0, self.tronWindow.size[1])]
+
         self.nodes = [Dot(self.tronWindow, position, self.colour)]
+        self.occupiedSpaces[position[0]][position[1]] = True
 
     def __del__(self):
         for node in self.nodes:

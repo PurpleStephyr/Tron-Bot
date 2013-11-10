@@ -53,6 +53,17 @@ class TronWindow(QtGui.QWidget):
                position[1] >= self.size[1]:
                 numKilled = numKilled + 1
                 self.deadLightCycles.append(lightCycle)
+            else:
+                collidingCycle = self.checkCollision(position)
+                if collidingCycle != None:
+                    numKilled = numKilled + 1
+                    self.deadLightCycles.append(lightCycle)
+                    if lightCycle.getHeadPosition() == collidingCycle.getHeadPosition():
+                        numKilled = numKilled + 1
+                        self.deadLightCycles.append(collidingCycle)
+                else:
+                    lightCycle.occupiedSpaces[position[0]][position[1]] = True
+
 
         for i in xrange(numKilled):
             self.lightCycles.remove(self.deadLightCycles[-i-1])
@@ -76,3 +87,10 @@ class TronWindow(QtGui.QWidget):
                         QtCore.Qt.Key_Down : Direction.Down,
                         QtCore.Qt.Key_Left : Direction.Left,
                         QtCore.Qt.Key_Right : Direction.Right }.get(keyEvent.key(), None) )
+
+    def checkCollision(self, position):
+        for otherCycle in self.lightCycles + self.deadLightCycles:
+            if otherCycle.occupiedSpaces[position[0]][position[1]]:
+                return otherCycle
+
+        return None
