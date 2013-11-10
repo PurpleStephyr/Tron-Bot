@@ -19,6 +19,7 @@ from PyQt4 import QtCore
 
 import Direction
 from Dot import *
+from Area import *
 
 class LightCycle(QtCore.QObject):
     def __init__(self, name, tronWindow, colour, position, initialDirection):
@@ -33,6 +34,7 @@ class LightCycle(QtCore.QObject):
 
         self.nodes = [Dot(self.tronWindow, position, self.colour)]
         self.occupiedSpaces[position[0]][position[1]] = True
+        self.corners = []
 
     def __del__(self):
         for node in self.nodes:
@@ -63,17 +65,16 @@ class LightCycle(QtCore.QObject):
                                                                 direction))
         for direction in Direction.All:
             attemptedPosition = Direction.add(self.getHeadPosition(), direction)
-            if self.isValidPosition(attemptedPosition) and \
+            if self.tronWindow.checkPosition(attemptedPosition) and \
                not attemptedPosition in otherPossiblePositions:
                 validDirections.append(direction)
 
         if len(validDirections) > 0 and not self.direction in validDirections:
             self.direction = validDirections[0]
 
-    def isValidPosition(self, position):
-        if position[0] >= 0 and position[1] >= 0 and \
-           position[0] < self.tronWindow.size[0] and position[1] < self.tronWindow.size[1] and \
-           self.tronWindow.checkCollision(position) == None:
-            return True
-        else:
-            return False
+        currentArea = Area(self.tronWindow, Direction.add(self.getHeadPosition(), self.direction))
+        for corner in self.corners:
+            corner.deleteLater()
+        self.corners = []
+        for corner in currentArea.corners:
+            self.corners.append(Dot(self.tronWindow, corner, QtCore.Qt.green))

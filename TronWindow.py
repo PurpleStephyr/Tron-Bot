@@ -52,8 +52,7 @@ class TronWindow(QtGui.QWidget):
         for lightCycle in self.lightCycles:
             lightCycle.move()
             position = lightCycle.getHeadPosition()
-            if position[0] < 0 or position[1] < 0 or position[0] >= self.size[0] or \
-               position[1] >= self.size[1]:
+            if not self.checkBounds(position):
                 numKilled = numKilled + 1
                 self.deadLightCycles.append(lightCycle)
             else:
@@ -98,3 +97,16 @@ class TronWindow(QtGui.QWidget):
                 return otherCycle
 
         return None
+
+    def checkBounds(self, position):
+        if position[0] < 0 or position[1] < 0 or position[0] >= self.size[0] or \
+           position[1] >= self.size[1]:
+            return False
+        else:
+            return True
+
+    def checkPosition(self, position):
+        if self.checkBounds(position) and self.checkCollision(position) == None:
+            return True
+        else:
+            return False
